@@ -1,0 +1,31 @@
+---
+# sudo usermod --shell /bin/bash ${user}
+- name: "Set shell of users to bash instead of zsh"
+  ansible.builtin.user:
+    name: "{{ item }}"
+    shell: /bin/bash
+  with_items:
+    - "kali"
+    - "root"
+
+- name: "Configure bash to use backtrack style"
+  block:
+    # sudo sed -i 's|PROMPT_ALTERNATIVE=.*|PROMPT_ALTERNATIVE=backtrack|g' /home/${user}/.bashrc
+    - name: "Set PROMPT_ALTERNATIVE in .bashrc"
+      ansible.builtin.lineinfile:
+        path: "{{ item }}/.bashrc"
+        regexp: '^PROMPT_ALTERNATIVE='
+        line: 'PROMPT_ALTERNATIVE=backtrack'
+      with_items:
+        - "/home/kali"
+        - "/root"
+
+    # sudo sed -i 's|NEWLINE_BEFORE_PROMPT=.*|NEWLINE_BEFORE_PROMPT=no|g' /home/${user}/.bashrc
+    - name: "Set NEWLINE_BEFORE_PROMPT in .bashrc"
+      ansible.builtin.lineinfile:
+        path: "{{ item }}/.bashrc"
+        regexp: '^NEWLINE_BEFORE_PROMPT='
+        line: 'NEWLINE_BEFORE_PROMPT=no'
+      with_items:
+        - "/home/kali"
+        - "/root"

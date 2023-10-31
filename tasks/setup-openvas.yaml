@@ -1,0 +1,42 @@
+---
+- name: "Install OpenVAS"
+  ansible.builtin.package:
+    name: gvm
+
+# idea: run `gvm-check-setup` and evaluate results
+
+- name: "Enable and start openvas services"
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: "started"
+    enable: true
+  with_items:
+    - redis-server@openvas
+    - gsad
+
+#- name: "Enable and start openvas services"
+#  ansible.builtin.systemd:
+#    name: "gvmd"
+#    state: "started"
+#    enable: true
+
+# only if missing
+#- name: "Create openvas certificate"
+#  ansible.builtin.command: |
+#    gvm-manage-certs -a -f
+#  become_user: _gvm
+
+#- name: "Syncronize NVT's"
+#  ansible.builtin.command: |
+#    greenbone-feed-sync --type nvt
+
+#sudo gvm-check-setup  # confirm ok
+#sudo runuser -u _gvm -- gvmd --user=admin --new-password=openvas
+
+#sudo runuser -u _gvm -- gvmd --get-scanners
+#sudo runuser -u _gvm -- gvmd --get-users
+#sudo runuser -u _gvm -- gvmd --get-users --verbose
+#sudo runuser -u _gvm -- gvmd --modify-scanner 08b69003-5fc2-4037-a479-93b440211c73 --value 2172d120-bdeb-4b41-93e9-430ef4d0ba18
+#sudo runuser -u _gvm -- gvmd --modify-scanner 6acd0832-df90-11e4-b9d5-28d24461215b --value 2172d120-bdeb-4b41-93e9-430ef4d0ba18
+#                                             # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#                                             # scanner uuid                                admin user uuid

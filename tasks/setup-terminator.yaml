@@ -1,0 +1,34 @@
+---
+- name: "Install terminator"
+  ansible.builtin.package:
+    name: terminator
+
+- name: "Create terminator config directory"
+  ansible.builtin.file:
+    path: "{{ item }}/.config/terminator"
+    state: directory
+    owner: kali
+    group: kali
+  with_items:
+    - "/home/kali"
+    - "/root"
+
+- name: "Create terminator config"
+  ansible.builtin.copy:
+    src: ../files/terminator.conf
+    dest: "{{ item }}/.config/terminator/config"
+    owner: kali
+    group: kali
+  with_items:
+    - "/home/kali"
+    - "/root"
+
+- name: "Adjust default terminal application"
+  ansible.builtin.lineinfile:
+    path: "{{ item }}/.config/xfce4/helpers.rc"
+    regexp: '(^TerminalEmulator=.*)?'
+    line: 'TerminalEmulator=terminator'
+    create: yes
+  with_items:
+    - "/home/kali"
+    - "/root"

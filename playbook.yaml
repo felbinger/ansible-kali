@@ -1,0 +1,94 @@
+---
+- name: "Install locale machine"
+  hosts: localhost
+  become: yes
+
+  handlers:
+    - name: reboot
+      # reboot module can't be used: https://github.com/ansible/ansible/issues/57874
+      ansible.builtin.command: reboot
+
+  tasks:
+    # sed -i 's|XKBLAYOUT="us"|XKBLAYOUT="de"|g' /etc/default/keyboard
+    - name: "Set german keyboard layout"
+      ansible.builtin.lineinfile:
+        path: "/etc/default/keyboard"
+        regexp: '^XKBLAYOUT='
+        line: 'XKBLAYOUT="de"'
+      notify: reboot  # required to apply new keyboard layout
+
+    - name: "Adjust shell"
+      ansible.builtin.include_tasks:
+        file: tasks/adjust-shell.yaml
+
+    - name: "Disable password prompts"
+      ansible.builtin.include_tasks:
+        file: tasks/disable-password-prompts.yaml
+
+    - name: "Setup terminator"
+      ansible.builtin.include_tasks:
+        file: tasks/setup-terminator.yaml
+
+    - name: "Check if rockyou.txt wordlist is still archived"
+      ansible.builtin.stat:
+        path: /usr/share/wordlists/rockyou.txt.gz
+      register: rockyou_archived
+
+    - name: "Extract rockyou.txt wordlist"
+      ansible.builtin.command: |
+        gunzip /usr/share/wordlists/rockyou.txt.gz
+      when: rockyou_archived.stat.exists
+
+    - name: "Clone useful repositories"
+      ansible.builtin.git:
+        repo: "{{ item }}"
+        dest: "/opt/{{ (item | urlsplit).path | split('/') | last }}"
+      with_items:
+        - https://github.com/andrew-d/static-binaries
+        - https://github.com/swisskyrepo/PayloadsAllTheThings
+        - https://github.com/carlospolop/hacktricks
+        - https://github.com/gchq/CyberChef
+        - https://github.com/carlospolop/PEASS-ng
+
+        - https://github.com/HavocFramework/Havoc
+        - https://github.com/its-a-feature/Mythic
+        - https://github.com/BishopFox/sliver
+        - https://github.com/cobbr/Covenant
+
+    - name: "Setup nessus"
+      ansible.builtin.include_tasks:
+        file: tasks/setup-nessus.yaml
+
+    - name: "Setup openvas"
+      ansible.builtin.include_tasks:
+        file: tasks/setup-openvas.yaml
+
+    - name: "Install custom packages"
+      ansible.builtin.package:
+        name:
+          - wine
+          - openjdk-22-jdk
+          - nodejs
+          - npm
+
+          # OpenSCAP
+          - openscap-scanner
+          - ssg-debian
+          - ssg-debderived
+          - ssg-nondebian
+          - ssg-applications
+
+    - name: "Install opcua-commander"
+      ansible.builtin.command: |
+        npm install -g opcua-commander
+
+    - name: "Install kali-linux-everything package, this might take several hours!"
+      ansible.builtin.package:
+        name: kali-linux-everything
+
+    - name: "Update all packages to their latest version, this might take several hours!"
+      when:
+        - "ansible_pkg_mgr == 'apt'"
+      ansible.builtin.apt:
+        name: "*"
+        state: latest

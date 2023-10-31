@@ -1,0 +1,22 @@
+---
+- name: "Copy download script to target"
+  ansible.builtin.copy:
+    src: ../files/download-nessus.sh
+    dest: "/tmp/download-nessus.sh"
+    mode: "0755"
+
+- name: "Execute download script"
+  ansible.builtin.command: |
+    /tmp/download-nessus.sh
+
+- name: "Get filename of nessus.deb"
+  ansible.builtin.find:
+    path: /tmp/
+    patterns: Nessus*.deb
+    file_type: file
+  register: nessus_filename
+
+- name: "Install nessus"
+  ansible.builtin.apt:
+    deb: "{{ nessus_filename.files[0].path }}"
+  when: "nessus_filename.matched > 0"
