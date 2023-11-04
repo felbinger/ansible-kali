@@ -12,3 +12,8 @@ ansible-playbook playbook.yaml -e ansible_become_pass=kali
 
 ### TODO
 * OpenVAS
+
+#### INSTALL
+squashfsTools  # kali?
+saleae-logic-2  # TODO add to kali
+oletools  # TODO add to kali

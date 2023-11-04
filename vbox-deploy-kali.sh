@@ -8,7 +8,7 @@ if ! which 7z &> /dev/null; then
 fi
 
 wget ${url}
-filename=$(basename ${url} | cut -d '.' -f 1)
+filename=$(basename ${url} .7z)
 7z x ${filename}.7z
 
 VBoxManage registervm ${filename}/${filename}.vbox
