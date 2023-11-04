@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ex
+
 url="https://ftp.halifax.rwth-aachen.de/kali-images/kali-2023.3/kali-linux-2023.3-virtualbox-amd64.7z"
 
 if ! which 7z &> /dev/null; then
