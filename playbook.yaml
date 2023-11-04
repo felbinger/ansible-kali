@@ -55,6 +55,10 @@
         - https://github.com/BishopFox/sliver
         - https://github.com/cobbr/Covenant
 
+    - name: "Import VPN connections"
+      ansible.builtin.include_tasks:
+        file: tasks/import-vpn.yaml
+
     - name: "Setup nessus"
       ansible.builtin.include_tasks:
         file: tasks/setup-nessus.yaml
@@ -70,6 +74,7 @@
           - openjdk-22-jdk
           - nodejs
           - npm
+          - squashfs-tools
 
           # OpenSCAP
           - openscap-scanner

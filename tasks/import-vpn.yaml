@@ -1,0 +1,36 @@
+---
+- name: "Find openvpn configuration files"
+  ansible.builtin.find:
+    paths: ./files/vpn/
+    patterns: "*.vault"
+  register: vault
+
+- name: "Decrypt ansible-vault encrypted files"
+  ansible.builtin.copy:
+    src: "{{ item.path }}"
+    dest: "{{ item.path.split('.')[:-1]|join('.') }}"  # src without .vault
+  loop: "{{ vault.files | default([]) }}"
+  when:
+    - "'path' in item"
+
+- name: "Find openvpn configuration files"
+  ansible.builtin.find:
+    paths: ./files/vpn/
+    patterns: "*.ovpn"
+  register: ovpn
+
+- name: "Check if openvpn configuration files has already been imported into network manager"
+  ansible.builtin.command: "nmcli c show {{ item.path.split('.')[:-1]|join('.')|basename }}"  # cut off .ovpn
+  loop: "{{ ovpn.files | default([]) }}"
+  when:
+    - "'path' in item"
+  register: imported
+  changed_when: false
+  ignore_errors: true  # when the connection doesn't exists it returns code 10, which is an error
+
+- name: "Import openvpn configuration files into network manager"
+  ansible.builtin.command: "nmcli c import type openvpn file {{ item.path }}"
+  loop: "{{ ovpn.files | default([]) }}"
+  when:
+    - "'path' in item"
+    - "imported.results[0].rc != 0"

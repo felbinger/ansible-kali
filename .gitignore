@@ -355,3 +355,8 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,macos,windows,jetbrains+all,visualstudiocode,python
+
+.vault.key
+
+files/vpn/*
+!files/vpn/*.vault
