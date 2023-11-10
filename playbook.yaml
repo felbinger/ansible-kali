@@ -87,6 +87,8 @@
       ansible.builtin.command: |
         npm install -g opcua-commander
 
+    # install docker
+
     - name: "Install kali-linux-everything package, this might take several hours!"
       ansible.builtin.package:
         name: kali-linux-everything

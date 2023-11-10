@@ -11,12 +11,12 @@ if ! which 7z &> /dev/null; then
 fi
 
 filename=$(basename ${url} .7z)
-
+mkdir -p ~/.virtualbox/
 # abort script successful if directory already exists
-! [ -d ~/.VirtualBox/${filename} ] || exit 0
-wget ${url} -O /tmp/${filename}.7z
-7z x -o~/.VirtualBox /tmp/${filename}.7z
-rm /tmp/${filename}.7z
+[ ! -d ~/.virtualbox/${filename} ] && (
+  wget ${url} -O /tmp/${filename}.7z
+  7z x -o~/.virtualbox /tmp/${filename}.7z
+  rm /tmp/${filename}.7z
+)
 
-VBoxManage registervm ~/.VirtualBox/${filename}/${filename}.vbox
-VBoxManage startvm ${filename}
+VBoxManage registervm ~/.virtualbox/${filename}/${filename}.vbox

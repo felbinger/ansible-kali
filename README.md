@@ -17,8 +17,8 @@ ansible-playbook playbook.yaml -e ansible_become_pass=kali --vault-password .vau
 
 find files/vpn/ -name '*.ovpn' -exec \
   ansible-vault encrypt \
-  --vault-password-file .vault.key \
-  --output {}.vault {} \;
+    --vault-password-file .vault.key \
+    --output {}.vault {} \;
 ```
 
 ### TODO
