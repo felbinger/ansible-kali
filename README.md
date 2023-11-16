@@ -56,5 +56,5 @@ sudo sed -i '1 aauth sufficient pam_succeed_if.so user ingroup sudo\n' /etc/pam.
 sudo apt install -y terminator seclists gobuster
 
 # set terminator as default terminal app
-sed -i "s/^TerminalEmulator=.*/TerminalEmulator=terminator/g" /home/kali/.config/xfce4/helpers.rc
+sed -i 's/^TerminalEmulator=.*/TerminalEmulator=terminator/g' /home/kali/.config/xfce4/helpers.rc
 ```
