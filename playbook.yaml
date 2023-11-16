@@ -55,6 +55,11 @@
         - https://github.com/BishopFox/sliver
         - https://github.com/cobbr/Covenant
 
+    - name: "Copy cheatsheets"
+      ansible.builtin.copy:
+        src: "./files/cheatsheets/"
+        dest: "/home/kali/CheatSheets/"
+
     - name: "Import VPN connections"
       ansible.builtin.include_tasks:
         file: tasks/import-vpn.yaml

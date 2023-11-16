@@ -2,6 +2,7 @@
 
 set -ex
 
+base=~/.virtualbox
 url="https://ftp.halifax.rwth-aachen.de/kali-images/kali-2023.3/kali-linux-2023.3-virtualbox-amd64.7z"
 
 # ensure package to unarchive 7z files is installed
@@ -11,12 +12,12 @@ if ! which 7z &> /dev/null; then
 fi
 
 filename=$(basename ${url} .7z)
-mkdir -p ~/.virtualbox/
+mkdir -p ${base}
 # abort script successful if directory already exists
-[ ! -d ~/.virtualbox/${filename} ] && (
+[ ! -d ${base}/${filename} ] && (
   wget ${url} -O /tmp/${filename}.7z
-  7z x -o~/.virtualbox /tmp/${filename}.7z
+  7z x -o${base} /tmp/${filename}.7z
   rm /tmp/${filename}.7z
 )
 
-VBoxManage registervm ~/.virtualbox/${filename}/${filename}.vbox
+VBoxManage registervm ${base}/${filename}/${filename}.vbox

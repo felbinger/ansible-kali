@@ -23,6 +23,7 @@
     - "/home/kali"
     - "/root"
 
+# sed -i "s/^TerminalEmulator=.*/TerminalEmulator=terminator/g" /home/kali/.config/xfce4/helpers.rc
 - name: "Adjust default terminal application"
   ansible.builtin.lineinfile:
     path: "{{ item }}/.config/xfce4/helpers.rc"
